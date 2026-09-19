@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyQuotePlugin", "CyQuotePlugin\CyQuotePlugin.csproj", "{CC9C6761-2A40-4B49-B85B-EEF0916259F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyQuotePlugin.Tests", "CyQuotePlugin.Tests\CyQuotePlugin.Tests.csproj", "{14FF14F6-98C7-4FC9-92DB-81129DD4410B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC9C6761-2A40-4B49-B85B-EEF0916259F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC9C6761-2A40-4B49-B85B-EEF0916259F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC9C6761-2A40-4B49-B85B-EEF0916259F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC9C6761-2A40-4B49-B85B-EEF0916259F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14FF14F6-98C7-4FC9-92DB-81129DD4410B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14FF14F6-98C7-4FC9-92DB-81129DD4410B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14FF14F6-98C7-4FC9-92DB-81129DD4410B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14FF14F6-98C7-4FC9-92DB-81129DD4410B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

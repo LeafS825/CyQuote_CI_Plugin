@@ -1,0 +1,36 @@
+<controls:ComponentBase x:TypeArguments="models:QuoteComponentSettings"
+                        x:Class="CyQuotePlugin.Controls.QuoteComponent"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:local="clr-namespace:CyQuotePlugin.Controls"
+                        xmlns:models="clr-namespace:CyQuotePlugin.Models"
+                        xmlns:controls="clr-namespace:ClassIsland.Core.Abstractions.Controls;assembly=ClassIsland.Core"
+                        mc:Ignorable="d"
+                        d:DesignWidth="600"
+                        PointerPressed="OnPointerPressed">
+    <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:QuoteComponent}}">
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Spacing="2"
+                    IsVisible="{Binding !Settings.SingleLine}">
+            <TextBlock Text="{Binding QuoteText}"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       FontSize="{DynamicResource MainWindowEmphasizedFontSize}" />
+            <TextBlock Text="{Binding MetadataText}"
+                       IsVisible="{Binding HasMetadata}"
+                       TextAlignment="Center"
+                       Opacity="0.68"
+                       FontSize="12" />
+        </StackPanel>
+        <TextBlock Text="{Binding SingleLineText}"
+                   IsVisible="{Binding Settings.SingleLine}"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextWrapping="NoWrap"
+                   TextAlignment="Center"
+                   FontSize="{DynamicResource MainWindowEmphasizedFontSize}" />
+    </Grid>
+</controls:ComponentBase>

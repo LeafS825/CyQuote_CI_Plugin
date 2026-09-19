@@ -1,0 +1,84 @@
+<controls:ComponentBase x:TypeArguments="models:QuoteComponentSettings"
+                        x:Class="CyQuotePlugin.Controls.QuoteComponentSettingsControl"
+                        xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:local="clr-namespace:CyQuotePlugin.Controls"
+                        xmlns:models="clr-namespace:CyQuotePlugin.Models"
+                        xmlns:controls="clr-namespace:ClassIsland.Core.Abstractions.Controls;assembly=ClassIsland.Core"
+                        mc:Ignorable="d"
+                        d:DesignWidth="700">
+    <ScrollViewer DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:QuoteComponentSettingsControl}}">
+        <StackPanel Classes="component-settings-container animated-intro" Spacing="8">
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="更换间隔" FontWeight="SemiBold" />
+                        <TextBlock Text="单位为秒；0 表示关闭定时更换。" Opacity="0.65" />
+                    </StackPanel>
+                    <NumericUpDown Minimum="0" Maximum="86400" Increment="5"
+                                   Grid.Column="1" Width="120"
+                                   Value="{Binding Settings.ChangeIntervalSeconds, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="显示作者" FontWeight="SemiBold" />
+                        <TextBlock Text="在语录后显示作者；语录未提供作者时不显示。" Opacity="0.65" />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.ShowAuthor, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="显示出处" FontWeight="SemiBold" />
+                        <TextBlock Text="在语录后显示作品或来源；语录未提供出处时不显示。" Opacity="0.65" />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.ShowSource, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="单行显示" FontWeight="SemiBold" />
+                        <TextBlock Text="将正文、作者和出处显示在同一行，不自动换行。" Opacity="0.65" />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.SingleLine, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="语句分类" FontWeight="SemiBold" />
+                    <TextBlock Text="不选择即使用全部分类。" Opacity="0.65" />
+                    <ItemsControl ItemsSource="{Binding CategoryOptions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                          Margin="0,3" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <StackPanel Spacing="6">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel>
+                            <TextBlock Text="本地语录库" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding CatalogSummary}" Opacity="0.65" />
+                        </StackPanel>
+                    <Button Content="立即同步"
+                            Grid.Column="1"
+                            IsEnabled="{Binding CanSync}"
+                            Click="OnSyncClick" />
+                    </Grid>
+                    <TextBlock Text="{Binding SyncStatus}" TextWrapping="Wrap" Opacity="0.72" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</controls:ComponentBase>
