@@ -1,0 +1,145 @@
+name: Release
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Read and validate version
+        id: version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          manifest="CyQuotePlugin/manifest.yml"
+          version="$(sed -n 's/^version:[[:space:]]*\([^[:space:]#]*\).*/\1/p' "$manifest" | tr -d '\r')"
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version in $manifest: '$version'"
+            exit 1
+          fi
+
+          tag="v$version"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "::error::Tag $tag already exists"
+            exit 1
+          fi
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "::error::Release $tag already exists"
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore CyQuotePlugin.sln
+
+      - name: Test
+        run: dotnet test CyQuotePlugin.sln --configuration Release --no-restore
+
+      - name: Build plugin
+        run: dotnet build CyQuotePlugin/CyQuotePlugin.csproj --configuration Release --no-restore
+
+      - name: Package plugin
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          output="CyQuotePlugin/bin/Release/net8.0"
+          built_version="$(sed -n 's/^version:[[:space:]]*\([^[:space:]#]*\).*/\1/p' "$output/manifest.yml" | tr -d '\r')"
+
+          if [[ "$built_version" != "$VERSION" ]]; then
+            echo "::error::Built manifest version '$built_version' does not match source version '$VERSION'"
+            exit 1
+          fi
+
+          python3 - "$output" "$RUNNER_TEMP/CyQuotePlugin.cipx" <<'PY'
+          import sys
+          from pathlib import Path
+          from zipfile import ZIP_DEFLATED, ZipFile
+
+          root = Path(sys.argv[1])
+          package = Path(sys.argv[2])
+          required = (
+              "CyQuotePlugin.dll",
+              "CyQuotePlugin.deps.json",
+              "manifest.yml",
+              "README.md",
+              "icon.png",
+              "Assets/quotes.jsonc",
+          )
+          missing = [name for name in required if not (root / name).is_file()]
+          if missing:
+              raise SystemExit("Missing package files: " + ", ".join(missing))
+
+          files = sorted(path for path in root.rglob("*") if path.is_file())
+          with ZipFile(package, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
+              for path in files:
+                  archive.write(path, path.relative_to(root).as_posix())
+
+          with ZipFile(package) as archive:
+              names = set(archive.namelist())
+
+          missing = [name for name in required if name not in names]
+          if missing:
+              raise SystemExit("Package is missing: " + ", ".join(missing))
+          PY
+
+      - name: Generate checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          sha256sum "CyQuotePlugin.cipx" > "CyQuotePlugin.cipx.sha256"
+          sha256sum -c "CyQuotePlugin.cipx.sha256"
+
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          notes="$RUNNER_TEMP/release-notes.md"
+
+          cat > "$notes" <<EOF
+          ## CyQuote 昔言 v$VERSION
+
+          - 测试：通过
+          - 安装包：CyQuotePlugin.cipx
+
+          校验安装包：
+
+              sha256sum -c CyQuotePlugin.cipx.sha256
+          EOF
+
+          gh release create "$TAG" \
+            "$RUNNER_TEMP/CyQuotePlugin.cipx" \
+            "$RUNNER_TEMP/CyQuotePlugin.cipx.sha256" \
+            --target "$GITHUB_SHA" \
+            --title "CyQuote 昔言 v$VERSION" \
+            --notes-file "$notes"
