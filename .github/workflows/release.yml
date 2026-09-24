@@ -38,7 +38,7 @@ jobs:
             exit 1
           fi
 
-          tag="v$version"
+          tag="$version"
 
           if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
             echo "::error::Tag $tag already exists"
@@ -108,13 +108,16 @@ jobs:
               raise SystemExit("Package is missing: " + ", ".join(missing))
           PY
 
-      - name: Generate checksum
+      - name: Generate checksums
         shell: bash
         run: |
           set -euo pipefail
           cd "$RUNNER_TEMP"
           sha256sum "CyQuotePlugin.cipx" > "CyQuotePlugin.cipx.sha256"
           sha256sum -c "CyQuotePlugin.cipx.sha256"
+
+          md5="$(md5sum "CyQuotePlugin.cipx" | cut -d ' ' -f 1 | tr '[:lower:]' '[:upper:]')"
+          printf '<!-- CLASSISLAND_PKG_MD5 {"CyQuotePlugin.cipx":"%s"} -->\n' "$md5" > "checksums.md"
 
       - name: Create GitHub release
         shell: bash
@@ -127,10 +130,11 @@ jobs:
           notes="$RUNNER_TEMP/release-notes.md"
 
           cat > "$notes" <<EOF
-          ## CyQuote 昔言 v$VERSION
+          ## CyQuote 昔言 $VERSION
 
           - 测试：通过
           - 安装包：CyQuotePlugin.cipx
+          - 校验文件：checksums.md、CyQuotePlugin.cipx.sha256
 
           校验安装包：
 
@@ -140,6 +144,7 @@ jobs:
           gh release create "$TAG" \
             "$RUNNER_TEMP/CyQuotePlugin.cipx" \
             "$RUNNER_TEMP/CyQuotePlugin.cipx.sha256" \
+            "$RUNNER_TEMP/checksums.md" \
             --target "$GITHUB_SHA" \
-            --title "CyQuote 昔言 v$VERSION" \
+            --title "CyQuote 昔言 $VERSION" \
             --notes-file "$notes"
