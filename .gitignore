@@ -3,3 +3,5 @@ obj/
 .idea/
 .vs/
 /docs
+CyQuotePlugin/cipx/checksums.md
+CyQuotePlugin/cipx/CyQuotePlugin.cipx
