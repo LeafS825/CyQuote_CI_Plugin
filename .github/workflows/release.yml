@@ -128,17 +128,19 @@ jobs:
         run: |
           set -euo pipefail
           notes="$RUNNER_TEMP/release-notes.md"
+          md5_comment="$(cat "$RUNNER_TEMP/checksums.md")"
 
           cat > "$notes" <<EOF
           ## CyQuote 昔言 $VERSION
 
           - 测试：通过
           - 安装包：CyQuotePlugin.cipx
-          - 校验文件：checksums.md、CyQuotePlugin.cipx.sha256
 
           校验安装包：
 
               sha256sum -c CyQuotePlugin.cipx.sha256
+
+          $md5_comment
           EOF
 
           gh release create "$TAG" \
