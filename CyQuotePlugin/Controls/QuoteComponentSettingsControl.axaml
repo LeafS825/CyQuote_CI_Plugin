@@ -50,6 +50,48 @@
                 </Grid>
             </Border>
             <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="自适应排版" FontWeight="SemiBold" />
+                        <TextBlock Text="单行放不下时自动降字号折行；仍放不下就在署名前加省略号，署名永远不会被截断。" Opacity="0.65" />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.AdaptiveLayout, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="最大行数" FontWeight="SemiBold" />
+                        <TextBlock Text="折行后最多占几行，超出部分用省略号收住。" Opacity="0.65" />
+                    </StackPanel>
+                    <NumericUpDown Grid.Column="1" Width="120"
+                                   Minimum="1" Maximum="4" Increment="1"
+                                   Value="{Binding Settings.MaxLines, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="最小字号" FontWeight="SemiBold" />
+                        <TextBlock Text="自动降字号时的下限，避免大屏上字太小看不清。" Opacity="0.65" />
+                    </StackPanel>
+                    <NumericUpDown Grid.Column="1" Width="120"
+                                   Minimum="6" Maximum="72" Increment="1"
+                                   Value="{Binding Settings.MinFontSize, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="可用高度" FontWeight="SemiBold" />
+                        <TextBlock Text="折行块最多占多高；0 表示不限制。默认 45 对应 ClassIsland 行高 40 + 行距 5。" Opacity="0.65" />
+                    </StackPanel>
+                    <NumericUpDown Grid.Column="1" Width="120"
+                                   Minimum="0" Maximum="500" Increment="5"
+                                   Value="{Binding Settings.MaxBlockHeight, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border Padding="12" CornerRadius="8" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
                 <StackPanel Spacing="6">
                     <TextBlock Text="语句分类" FontWeight="SemiBold" />
                     <TextBlock Text="不选择即使用全部分类。" Opacity="0.65" />

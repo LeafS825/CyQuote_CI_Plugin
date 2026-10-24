@@ -10,27 +10,22 @@
                         mc:Ignorable="d"
                         d:DesignWidth="600"
                         PointerPressed="OnPointerPressed">
-    <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:QuoteComponent}}">
-        <StackPanel VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Spacing="2"
-                    IsVisible="{Binding !Settings.SingleLine}">
-            <TextBlock Text="{Binding QuoteText}"
-                       TextWrapping="Wrap"
-                       TextAlignment="Center"
-                       FontSize="{DynamicResource MainWindowEmphasizedFontSize}" />
-            <TextBlock Text="{Binding MetadataText}"
-                       IsVisible="{Binding HasMetadata}"
-                       TextAlignment="Center"
-                       Opacity="0.68"
-                       FontSize="12" />
-        </StackPanel>
-        <TextBlock Text="{Binding SingleLineText}"
-                   IsVisible="{Binding Settings.SingleLine}"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   TextWrapping="NoWrap"
+    <!--
+        语录与署名合并为一个字段，由 QuoteLayout 统一决定：单行 / 降字号折行 / 在署名前断句省略。
+        ClipToBounds 兜底：万一哪次判断失手，宁可裁掉也不要画到隔壁组件上。
+        MaxWidth 必须给——ClassIsland 行内组件是无限宽测量的，没有它 Wrap 和 Trimming 都不会生效。
+    -->
+    <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:QuoteComponent}}"
+          ClipToBounds="True">
+        <TextBlock x:Name="QuoteTextBlock"
+                   Text="{Binding DisplayText}"
+                   FontSize="{Binding DisplayFontSize}"
+                   MaxWidth="{Binding DisplayMaxWidth}"
+                   TextWrapping="{Binding DisplayWrapping}"
+                   MaxLines="{Binding DisplayMaxLines}"
+                   TextTrimming="{Binding DisplayTrimming}"
                    TextAlignment="Center"
-                   FontSize="{DynamicResource MainWindowEmphasizedFontSize}" />
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
     </Grid>
 </controls:ComponentBase>

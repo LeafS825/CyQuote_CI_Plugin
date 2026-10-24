@@ -13,6 +13,6 @@ repoOwner: LeafS825
 repoName: CyQuote_CI_Plugin
 assetsRoot: main/CyQuotePlugin
 artifactName: CyQuotePlugin.cipx
-version: 1.0.0.0
+version: 1.1.0.0
 apiVersion: 2.1.0.1
 author: LeafS825
