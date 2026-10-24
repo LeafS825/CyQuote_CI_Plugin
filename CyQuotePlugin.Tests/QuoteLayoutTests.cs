@@ -51,6 +51,22 @@ public class QuoteLayoutTests
     }
 
     [Fact]
+    public void MediumQuote_PicksLargestFontThatStillFits_NotTheBudgetFloor()
+    {
+        // 上限 1872、原字号 40：预算字号只有 15.5px，但 27px 出头就能单行装下——应当取大的那个
+        var options = new QuoteLayout.Options(40, 1872, 45, 14, 2);
+        var body = "有两种东西，我们愈是时常反复地思索，它们就愈是给人的心灵灌注了时时翻新、有加无已的赞叹和敬畏：头顶的星空和心中的道德律令。";
+
+        var result = QuoteLayout.Arrange(body, Attribution, options, Simulate(1872, 2));
+
+        Assert.False(result.Truncated);
+        Assert.Equal(1, result.LineCount);
+        Assert.True(
+            result.FontSize > 45 / (2 * QuoteLayout.LineHeightRatio),
+            $"应当优先放大字号，实际 {result.FontSize:F1}px");
+    }
+
+    [Fact]
     public void LongQuote_TruncatesBeforeAttribution()
     {
         var options = new QuoteLayout.Options(20, 1200, 45, 14, 2);
